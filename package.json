@@ -1,0 +1,32 @@
+{
+  "name": "mynews",
+  "version": "1.0.0",
+  "description": "Learn node.js(express and mongoose)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vova-iz-cheb/mynews.git"
+  },
+  "author": "V.Cherepkov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vova-iz-cheb/mynews/issues"
+  },
+  "homepage": "https://github.com/vova-iz-cheb/mynews#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "config": "^3.2.4",
+    "connect-mongo": "^3.1.0",
+    "cookie-parser": "^1.4.4",
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "express-session": "^1.17.0",
+    "hbs": "^4.0.6",
+    "mongoose": "^5.7.7",
+    "nodemon": "^1.19.4"
+  }
+}

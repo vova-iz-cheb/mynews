@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgb(242, 250, 253);
+}
+
+input, label {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.error {
+  margin-bottom: 1rem;
+  padding: 10px;
+  border: 1px solid red;
+  color: red;
+}

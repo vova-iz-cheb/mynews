@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box; }
+
+body {
+  background-color: #f2fafd; }
+
+input, label {
+  display: inline-block;
+  margin-bottom: 10px; }
+
+.error {
+  margin-bottom: 1rem;
+  padding: 10px;
+  border: 1px solid red;
+  color: red; }
+
+/*# sourceMappingURL=style.css.map */

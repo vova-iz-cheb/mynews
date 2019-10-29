@@ -1,0 +1,15 @@
+<h1>Регистрация:</h1>
+{{#if error}}
+  <div class='error'>
+    {{error}}
+  </div>
+{{/if}}
+<form action="/registration" method='POST' name='reg'>
+  <label for="login">Логин:</label><br>
+  <input type="text" name='login' id='login' required value='{{login}}'><br>
+  <label for="pass">Пароль:</label><br>
+  <input type="password" name='password' id='pass' required value='{{pass}}'><br>
+  <label for="pass2">Повторите пароль:</label><br>
+  <input type="password" name='password2' id='pass2' required value='{{pass2}}'><br>
+  <input type="submit" value="Зарегистрироваться">
+</form>
