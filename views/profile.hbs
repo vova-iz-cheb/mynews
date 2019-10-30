@@ -1,0 +1,31 @@
+<h1>{{userName}}</h1>
+<p>Дата регистрации: {{date}}</p>
+<form action="/changepassword" method="POST">
+  {{#if error}}
+    <div class="error">{{error}}</div>
+  {{/if}}
+  {{#if success}}
+    <div class="success">{{success}}</div>
+  {{/if}}
+  <fieldset>
+    <legend>Изменить пароль:</legend>
+    <label for="oldpass">Старый пароль</label> 
+    <input type="password" name="oldpass" id="oldpass" value='{{oldpass}}' required><br>
+    <label for="pass">Новый пароль</label> 
+    <input type="password" name="pass" id="pass" value='{{pass}}' required><br>
+    <label for="pass2">Новый пароль</label> 
+    <input type="password" name="pass2" id="pass2" value='{{pass2}}' required><br>
+    <input type="submit" value="Изменить">
+  </fieldset>
+</form>
+<form action="/deleteuser" method="POST">
+  {{#if error2}}
+    <div class="error">{{error2}}</div>
+  {{/if}}
+  <fieldset>
+    <legend>Удалить аккаунт:</legend>
+    <label for="oldpassword">Старый пароль</label> 
+    <input type="password" name="oldpassword" id="oldpassword" value='{{oldpassword}}' required><br>
+    <input type="submit" value="Удалить аккаунт">
+  </fieldset>
+</form>

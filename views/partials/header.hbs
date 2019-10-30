@@ -1,0 +1,16 @@
+<header class='header'>
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/about">О сайте</a>
+  </nav>
+  <div class='user-box'>
+  {{#if userName}}
+    <a href="/profile">{{userName}}</a> | 
+    <a href="/logout">Выйти</a>
+  {{else}}
+    <a href="/login">Войти</a> | 
+    <a href="/registration">Регистрация</a>
+  {{/if}}
+</div>
+</header>
+

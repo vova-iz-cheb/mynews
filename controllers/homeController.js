@@ -2,6 +2,7 @@ const News = require("../models/News");
 const User = require("../models/User");
 const generateSalt = require('../utils/generateSalt');
 const createHash = require('../utils/createHash');
+const getStringFromDate = require('../utils/getStringFromDate');
 
 module.exports.reg = (req, res) => {
   res.render("reg.hbs", {
@@ -25,7 +26,7 @@ module.exports.postReg = (req, res) => {
   }
   else {
     User.find({login: req.body.login}, (err, user) => {
-      if(err) console.log(err);
+      if(err) return console.log(err);
       if(user.length) error = 'Такой пользователь уже зарегистрирован!'; // [] расценивается как true
       
       // пришлось засунуть условие внутри колбэка
@@ -70,10 +71,10 @@ module.exports.login = (req, res) => {
 module.exports.postLogin = (req, res) => {
   let p = new Promise((resolve, reject) => {
     if(!req.body.login || !req.body.password) reject('Все поля должны быть заполнены!');
-    User.find({login: req.body.login}, (err, user) => {
-      if(err) console.log(err);
-      if(!user.length) reject('Нет такого пользователя!');
-      resolve(user[0]); // объект юзера находится в массиве
+    User.findOne({login: req.body.login}, (err, user) => {
+      if(err) return console.log(err);
+      if(!user) reject('Нет такого пользователя!');
+      resolve(user);
     });
   });
 
@@ -104,6 +105,129 @@ module.exports.logout = (req, res) => {
   });
 };
 
+module.exports.profile = (req, res) => {
+  if(req.session.userName) {
+    User.findOne({login: req.session.userName}, (err, user) => {
+      if(err) return console.log(err);
+      res.render('profile.hbs', {
+        title: 'Profile',
+        date: getStringFromDate(user.reg_date),
+      })
+    })
+  } else {
+    res.redirect('/');
+  }
+}
+
+module.exports.changepassword = (req, res) => {
+  if(req.session.userName) {
+    let date = '';
+
+    let p = new Promise((resolve, reject) => {
+      User.findOne({login: req.session.userName}, (err, user) => {
+        if(err) return console.log(err);
+        if(!user) res.redirect('/logout');
+        date = getStringFromDate(user.reg_date);
+        if(!req.body.oldpass || !req.body.pass || !req.body.pass2) reject('Все поля должны быть заполнены!');
+        if(req.body.pass !== req.body.pass2) reject('Пароли не верны!');
+        if(! /^[\w\d]{5,20}$/i.test(req.body.pass)) {
+         reject('Пароль должен содержать буквы латинского алфавита, _ и цифры. Колличество символов от 5 до 20!');
+        }
+        resolve(user);
+      });
+    });
+  
+    p
+    .then(user => {
+      const hash = createHash(req.body.oldpass, user.salt);
+      if(hash === user.hash) {
+        return user;
+      } else {
+        return Promise.reject('Пароль не верен!');
+      }
+    })
+    .then(user => {
+      const newSalt = generateSalt(20);
+      const newHash = createHash(req.body.pass, newSalt);
+
+      User.updateOne({login: req.session.userName}, {salt: newSalt, hash: newHash}, (err, result) => {
+        if(err) return console.log(err);
+        res.render('profile.hbs', {
+          title: 'Profile',
+          success: 'Пароль изменен!',
+          date: getStringFromDate(user.reg_date),
+        });
+      });
+    })
+    .catch(error => {
+      
+      res.render('profile.hbs', {
+        title: 'Profile',
+        error,
+        date,
+        oldpass: req.body.oldpass,
+        pass: req.body.pass,
+        pass2: req.body.pass2,
+      });
+    });
+  } else {
+    res.redirect('/');
+  }
+}
+
+module.exports.deleteuser = (req, res) => {
+  if(req.session.userName) {
+    let date = '';
+
+    let p = new Promise((resolve, reject) => {
+      User.findOne({login: req.session.userName}, (err, user) => {
+        if(err) return console.log(err);
+        if(!user) res.redirect('/logout');
+        date = getStringFromDate(user.reg_date);
+        if(!req.body.oldpassword) reject('Все поля должны быть заполнены!');
+        resolve(user);
+      });
+    });
+  
+    p
+    .then(user => {
+      const hash = createHash(req.body.oldpassword, user.salt);
+      if(hash === user.hash) {
+        return user.id;
+      } else {
+        return Promise.reject('Пароль не верен!');
+      }
+    })
+    .then(id => {
+      User.findByIdAndDelete(id, (err, user) => {
+        if(err) return console.log(err);
+        req.session.destroy(() => {
+          res.redirect('/');
+        });
+      });
+    })
+    .catch(error2 => {
+      
+      res.render('profile.hbs', {
+        title: 'Profile',
+        error2,
+        date,
+        oldpassword: req.body.oldpassword,
+      });
+    });
+  } else {
+    res.redirect('/');
+  }
+}
+
+module.exports.about = (req, res) => {
+  res.render("about.hbs", {
+    title: 'О сайте',
+  });
+};
+
 module.exports.index = (req, res) => {
-  res.render("home.hbs");
+  res.render("home.hbs", {
+    title: 'Добро пожаловать!',
+  });
 };
