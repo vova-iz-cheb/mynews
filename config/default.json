@@ -7,7 +7,8 @@
     "uri": "mongodb://localhost:27017/mynews",
     "options": {
       "useNewUrlParser": true,
-      "useUnifiedTopology": true 
+      "useUnifiedTopology": true,
+      "useFindAndModify": false
     }
   },
   "secret": "i walk through the forest"

@@ -227,7 +227,21 @@ module.exports.about = (req, res) => {
 };
 
 module.exports.index = (req, res) => {
-  res.render("home.hbs", {
-    title: 'Добро пожаловать!',
+  let news;
+
+  News.find({}, null, {sort: {created_date: -1}}, (err, news) => {
+    if(err) return console.log(err);
+    news.forEach( item => {
+      let createdDateStr = getStringFromDate(item.created_date);
+      item.createdDateStr = createdDateStr;
+      if(item.changed_date) {
+        let changedDateStr = getStringFromDate(item.changed_date);
+        item.changedDateStr = changedDateStr;
+      }
+    })
+    res.render("home.hbs", {
+      title: 'Добро пожаловать!',
+      news,
+    });
   });
 };

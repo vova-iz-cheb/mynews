@@ -1,1 +1,30 @@
-<h1>Главная страница</h1>
+<h1>Новости:</h1>
+{{#if userName}}
+<a href="/news/create">Создать новость</a>
+{{/if}}
+
+{{#if news}}
+<div class='news__list'>
+  {{#each news}}
+    <article class="news">
+      {{#if ../userName}}
+      <div class='news__changed'>
+        <a href="/news/change?id={{_id}}">Изменить</a> | 
+        <a href="/news/delete?id={{_id}}">Удалить</a>
+      </div>
+      {{/if}}
+      <h2>{{title}}</h2>
+      <p>{{content}}</p>
+      <footer>
+        <p>Автор: {{author}}</p>
+        <p>Дата создания: <date>{{createdDateStr}}</date></p>
+        {{#if changedDateStr}}
+          <p><p>Дата изменения: <date>{{changedDateStr}}</date></p></p>
+        {{/if}}
+      </footer>
+    </article>
+  {{/each}}
+</div>
+{{else}}
+<p>К сожалению новостей нет!</p>
+{{/if}}

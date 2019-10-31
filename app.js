@@ -46,6 +46,7 @@ app.use(session({
 
 //Routers 
 const homeRouter = require("./routes/homeRouter.js");
+const newsRouter = require("./routes/newsRouter.js");
 
 //Парсер для форм
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -59,6 +60,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/news', newsRouter);
 app.use('/', homeRouter);
 
 app.use((req, res, next) => {

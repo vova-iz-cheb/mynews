@@ -46,6 +46,18 @@ input, label {
   }
 }
 
+.news {
+  position: relative;
+  border: 1px solid #d7d7e6;
+  padding: 0 10px;
+  margin-bottom: 10px;
+  &__changed {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -78,4 +90,8 @@ input, label {
   padding: 10px;
   border: 1px solid #33b92f;
   color: #33b92f;
+}
+
+a {
+  color: rgb(20, 109, 136);
 }
