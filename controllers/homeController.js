@@ -11,55 +11,49 @@ module.exports.reg = (req, res) => {
 }
 
 module.exports.postReg = (req, res) => {
-  let error = '';
-  if(!req.body.login || !req.body.password || !req.body.password2) {
-    error = 'Все поля должны быть заполнены!';
-  }
-  else if(req.body.password !== req.body.password2) {
-    error = 'Пароли не совпадают!';
-  }
-  else if(! /^[\w\d]{3,20}$/i.test(req.body.login)) {
-    error = 'Логин должен содержать буквы латинского алфавита, _ и цифры. Колличество символов от 3 до 20!';
-  }
-  else if(! /^[\w\d]{5,20}$/i.test(req.body.password)) {
-    error = 'Пароль должен содержать буквы латинского алфавита, _ и цифры. Колличество символов от 5 до 20!';
-  }
-  else {
-    User.find({login: req.body.login}, (err, user) => {
+  let p = new Promise((resolve, reject) => {
+    if(!req.body.login || !req.body.password || !req.body.password2) reject('Все поля должны быть заполнены!');
+    if(req.body.password !== req.body.password2) reject('Пароли не совпадают!');
+    if(! /^[\w\d]{3,20}$/i.test(req.body.login)) reject('Логин должен содержать буквы латинского алфавита, _ и цифры. Колличество символов от 3 до 20!');
+    if(! /^[\w\d]{5,20}$/i.test(req.body.password)) reject('Пароль должен содержать буквы латинского алфавита, _ и цифры. Колличество символов от 5 до 20!');
+
+    User.findOne({login: req.body.login}, (err, user) => {
       if(err) return console.log(err);
-      if(user.length) error = 'Такой пользователь уже зарегистрирован!'; // [] расценивается как true
-      
-      // пришлось засунуть условие внутри колбэка
-      if(error) { // отправляем пользователю представление с ошибкой
-        res.render("reg.hbs", {
-          title: 'Регистрация',
-          error,
-          login: req.body.login,
-          pass: req.body.password,
-          pass2: req.body.password2,
-        });
-      } else { //добавляем пользователя
-        const salt = generateSalt(20);
-        const hash = createHash(req.body.password, salt);
-    
-        const newUser = new User({
-          login: req.body.login,
-          salt,
-          hash
-        });
-    
-        newUser.save()
-        .then(user => {
-          req.session.userName = user.login; // записываем в сессию login
-          res.redirect('/');
-        })
-        .catch(err => {
-          console.log(err);
-          res.status(503).send('Что то пошло не так!');
-        });
-      }
+      if(user) reject('Такой пользователь уже зарегистрирован!!');
+      resolve(user);
     });
-  }
+  });
+
+  p
+  .then(user => {
+    const salt = generateSalt(20);
+    const hash = createHash(req.body.password, salt);
+
+    const newUser = new User({
+      login: req.body.login,
+      salt,
+      hash
+    });
+
+    newUser.save()
+    .then(user => {
+      req.session.userName = user.login; // записываем в сессию login
+      res.redirect('/');
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(503).send('Что то пошло не так!');
+    });
+  })
+  .catch(error => {
+    res.render("reg.hbs", {
+      title: 'Регистрация',
+      error,
+      login: req.body.login,
+      pass: req.body.password,
+      pass2: req.body.password2,
+    });
+  });
 }
 
 module.exports.login = (req, res) => {
